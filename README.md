@@ -1,7 +1,7 @@
 # maddy
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version: 1.5.0](https://img.shields.io/badge/Version-1.5.0-brightgreen.svg)](https://semver.org/)
+[![Version: 1.6.0](https://img.shields.io/badge/Version-1.6.0-brightgreen.svg)](https://semver.org/) <!-- MADDY_VERSION_LINE_REPLACEMENT -->
 
 maddy is a C++ Markdown to HTML **header-only** parser library.
 
@@ -30,7 +30,16 @@ The supported syntax can be found in the [definitions docs](docs/definitions.md)
 
 ## How to add maddy to your cmake project
 
-You can use [FetchContent](https://cmake.org/cmake/help/latest/module/FetchContent.html)
+Use `find_package()` which provides `maddy::maddy` target:
+
+```cmake
+find_package(maddy REQUIRED)
+
+add_executable(my_exe)
+target_link_libraries(my_exe PRIVATE maddy::maddy)
+```
+
+Or you can use [FetchContent](https://cmake.org/cmake/help/latest/module/FetchContent.html)
 which was introduced in CMake 3.11.
 
 This way you can add

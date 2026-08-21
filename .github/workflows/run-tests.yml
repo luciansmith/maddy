@@ -9,7 +9,7 @@ jobs:
   test-on-ubuntu:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: lukka/get-cmake@latest
         with:
           cmakeVersion: "~4.2.0"  # <--= optional, use most recent 4.2.x version
@@ -18,16 +18,25 @@ jobs:
         run: |
           mkdir tmp
           cd tmp
-          cmake -DMADDY_BUILD_WITH_TESTS=ON ..
+          cmake -DMADDY_BUILD_WITH_TESTS=ON -DCMAKE_INSTALL_PREFIX=./install ..
           make -j4
+          make install
       - name: run tests
         run: |
           ./build/MaddyTests
+      - name: test find_package
+        run: |
+          cd tests/cmake/find_package
+          mkdir tmp
+          cd tmp
+          cmake -DCMAKE_PREFIX_PATH=../../../tmp/install ..
+          make -j4
+          ./maddy_find_package_example
 
   test-on-windows:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: lukka/get-cmake@latest
         with:
           cmakeVersion: "~4.2.0"  # <--= optional, use most recent 4.2.x version
@@ -45,7 +54,7 @@ jobs:
   test-on-osx:
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: lukka/get-cmake@latest
         with:
           cmakeVersion: "~4.2.0"  # <--= optional, use most recent 4.2.x version
