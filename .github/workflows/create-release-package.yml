@@ -11,7 +11,7 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: lukka/get-cmake@latest
         with:
           cmakeVersion: "~3.25.0"  # <--= optional, use most recent 3.25.x version
@@ -28,11 +28,14 @@ jobs:
       - name: Get current tag message
         id: tag-message
         run: |
+          git fetch --tags --force
           TAG_NAME=${GITHUB_REF#refs/tags/}
-          TAG_MESSAGE=$(git tag -l --format='%(contents)' $TAG_NAME)
+          echo "TAG_NAME: $TAG_NAME"
+          TAG_MESSAGE=$(git tag -l --format='%(contents)' "$TAG_NAME")
           echo "message<<EOF" >> $GITHUB_OUTPUT
           echo "$TAG_MESSAGE" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
+          echo "TAG_MESSAGE: $TAG_MESSAGE"
 
       - name: create release
         uses: svenstaro/upload-release-action@v2
@@ -40,7 +43,7 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: build/maddy-src.zip
           tag: ${{ github.ref }}
-          release_name: ${{ github.ref }}
+          release_name: ${{ github.ref_name }}
           body: |
             ${{ steps.tag-message.outputs.message }}
 
