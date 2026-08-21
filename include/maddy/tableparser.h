@@ -100,8 +100,7 @@ public:
    * @return {bool}
    */
   static bool IsStartingLine(
-    const std::string& line,
-    bool useMaddySpecificMarkdown = true
+    const std::string& line, bool useMaddySpecificMarkdown = true
   )
   {
     if (useMaddySpecificMarkdown)
@@ -296,7 +295,12 @@ private:
   }
 
   // --- GFM-pipe-table mode state ---
-  enum class GfmState { EXPECT_HEADER, EXPECT_SEPARATOR, IN_BODY };
+  enum class GfmState
+  {
+    EXPECT_HEADER,
+    EXPECT_SEPARATOR,
+    IN_BODY
+  };
 
   GfmState gfmState;
   std::string headerLine;
@@ -325,10 +329,8 @@ private:
         return;
 
       case GfmState::EXPECT_SEPARATOR:
-        if (
-          IsSeparatorRow(line) &&
-          SplitRow(line).size() == SplitRow(this->headerLine).size()
-        )
+        if (IsSeparatorRow(line) &&
+            SplitRow(line).size() == SplitRow(this->headerLine).size())
         {
           this->WriteGfmHeader();
           this->gfmState = GfmState::IN_BODY;
@@ -441,9 +443,7 @@ private:
   void FallBackToParagraph(const std::string& secondLine)
   {
     this->fallbackParser = std::make_shared<ParagraphParser>(
-      [this](std::string& l) { this->parseLine(l); },
-      nullptr,
-      true
+      [this](std::string& l) { this->parseLine(l); }, nullptr, true
     );
 
     std::string first = this->headerLine;

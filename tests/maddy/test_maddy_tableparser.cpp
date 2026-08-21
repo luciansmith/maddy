@@ -84,18 +84,12 @@ protected:
   }
 };
 
-TEST_F(
-  MADDY_TABLEPARSER_GFM,
-  IsStartingLineReturnsTrueForAnyLineWithAPipe
-)
+TEST_F(MADDY_TABLEPARSER_GFM, IsStartingLineReturnsTrueForAnyLineWithAPipe)
 {
   ASSERT_TRUE(maddy::TableParser::IsStartingLine("| a | b |", false));
 }
 
-TEST_F(
-  MADDY_TABLEPARSER_GFM,
-  IsStartingLineReturnsFalseForABlankLine
-)
+TEST_F(MADDY_TABLEPARSER_GFM, IsStartingLineReturnsFalseForABlankLine)
 {
   ASSERT_FALSE(maddy::TableParser::IsStartingLine("   ", false));
 }
@@ -151,10 +145,7 @@ TEST_F(
   ASSERT_EQ(expected, tableParser->GetResult().str());
 }
 
-TEST_F(
-  MADDY_TABLEPARSER_GFM,
-  OldMaddySpecificSyntaxIsNotRecognizedAsATable
-)
+TEST_F(MADDY_TABLEPARSER_GFM, OldMaddySpecificSyntaxIsNotRecognizedAsATable)
 {
   std::string first = "|table>";
   std::string second = "Left header|middle header|last header";
@@ -169,7 +160,5 @@ TEST_F(
   }
 
   ASSERT_TRUE(tableParser->IsFinished());
-  ASSERT_EQ(
-    std::string::npos, tableParser->GetResult().str().find("<table>")
-  );
+  ASSERT_EQ(std::string::npos, tableParser->GetResult().str().find("<table>"));
 }
