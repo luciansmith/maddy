@@ -14,6 +14,7 @@ maddy uses [semver versioning](https://semver.org/).
 
 ## Upcoming
 
+* ![**ADDED**](https://img.shields.io/badge/-ADDED-%23099) New `maddy::types::MADDY_SPECIFIC_PARSER` config flag (on by default, keeping current behavior). Turning it off switches `TableParser` from maddy's own `|table>` sigil syntax to standard GitHub-flavored-Markdown pipe tables (which have no footer concept).
 * ...
 
 ## version 1.6.0 2025-07-26
