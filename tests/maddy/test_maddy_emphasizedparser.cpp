@@ -67,11 +67,43 @@ TEST(MADDY_EMPHASIZEDPARSER, ItReplacesUnderscoresWithMultipleWords)
 
 TEST(MADDY_EMPHASIZEDPARSER, ItAllowsDoubleUnderscores)
 {
-  // I'm not sure if this is standard or not, but this is how the github
-  // markdown parser behaves.  Other things I've seen want it to *not*
-  // match.
+  // Per CommonMark, a leftover delimiter from an unbalanced run renders
+  // outside the tag it didn't pair into, not inside it.
   std::string text = "some __text testing it_ out";
-  std::string expected = "some <em>_text testing it</em> out";
+  std::string expected = "some _<em>text testing it</em> out";
+  auto emphasizedParser = std::make_shared<maddy::EmphasizedParser>();
+
+  emphasizedParser->Parse(text);
+
+  ASSERT_EQ(expected, text);
+}
+
+TEST(MADDY_EMPHASIZEDPARSER, ItAllowsTrailingDoubleUnderscores)
+{
+  std::string text = "some _text testing it__ out";
+  std::string expected = "some <em>text testing it</em>_ out";
+  auto emphasizedParser = std::make_shared<maddy::EmphasizedParser>();
+
+  emphasizedParser->Parse(text);
+
+  ASSERT_EQ(expected, text);
+}
+
+TEST(MADDY_EMPHASIZEDPARSER, ItAllowsManyLeadingLeftoverUnderscores)
+{
+  std::string text = "some ____text testing it_ out";
+  std::string expected = "some ___<em>text testing it</em> out";
+  auto emphasizedParser = std::make_shared<maddy::EmphasizedParser>();
+
+  emphasizedParser->Parse(text);
+
+  ASSERT_EQ(expected, text);
+}
+
+TEST(MADDY_EMPHASIZEDPARSER, ItAllowsManyTrailingLeftoverUnderscores)
+{
+  std::string text = "some _text testing it____ out";
+  std::string expected = "some <em>text testing it</em>___ out";
   auto emphasizedParser = std::make_shared<maddy::EmphasizedParser>();
 
   emphasizedParser->Parse(text);

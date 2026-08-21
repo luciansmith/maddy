@@ -14,7 +14,8 @@ maddy uses [semver versioning](https://semver.org/).
 
 ## Upcoming
 
-* ![**FIXED**](https://img.shields.io/badge/-FIXED-%23090) Only create emphasis tags at word boundaries, i.e. `not only_internal_underscores`.
+* ![**FIXED**](https://img.shields.io/badge/-FIXED-%23090) Only create strong and emphasis tags at word boundaries, i.e. `not only_internal_underscores`.
+* ![**FIXED**](https://img.shields.io/badge/-FIXED-%23090) Only create strong and emphasis tags at word boundaries for underscores, and correctly leave any leftover delimiters outside the tag on either side, however many there are, i.e. `___text__` becomes `_<strong>text</strong>` and `_text_______` becomes `<em>text</em>______`.
 * ...
 
 ## version 1.5.0 2025-04-21

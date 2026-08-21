@@ -95,7 +95,7 @@ TEST(MADDY_STRONGPARSER, ItReplacesUnderscoresAtStringEdges)
   ASSERT_EQ(expected, text);
 }
 
-TEST(DISABLED_MADDY_STRONGPARSER, ItDoesNotReplaceMarkdownWithInlineUnderscores)
+TEST(MADDY_STRONGPARSER, ItDoesNotReplaceMarkdownWithInlineUnderscores)
 {
   std::string text = "some text__bla__text testing __it__ out";
   std::string expected = "some text__bla__text testing <strong>it</strong> out";
@@ -106,7 +106,7 @@ TEST(DISABLED_MADDY_STRONGPARSER, ItDoesNotReplaceMarkdownWithInlineUnderscores)
   ASSERT_EQ(expected, text);
 }
 
-TEST(DISABLED_MADDY_STRONGPARSER, ItOnlyReplacesUnderscoresAtWordBreaks)
+TEST(MADDY_STRONGPARSER, ItOnlyReplacesUnderscoresAtWordBreaks)
 {
   std::string text = "some __text__bla__ testing __it__ out";
   std::string expected =
@@ -129,14 +129,45 @@ TEST(MADDY_STRONGPARSER, ItReplacesUnderscoresWithMultipleWords)
   ASSERT_EQ(expected, text);
 }
 
-TEST(DISABLED_MADDY_STRONGPARSER, ItAllowsTripleUnderscores)
+TEST(MADDY_STRONGPARSER, ItAllowsTripleUnderscores)
 {
-  // I'm not sure if this is standard or not, but this is how the github
-  // markdown parser behaves.  Other things I've seen want it to *not*
-  // match.
-
+  // Per CommonMark, a leftover delimiter from an unbalanced run renders
+  // outside the tag it didn't pair into, not inside it.
   std::string text = "some ___text testing it__ out";
-  std::string expected = "some <strong>_text testing it</strong> out";
+  std::string expected = "some _<strong>text testing it</strong> out";
+  auto strongParser = std::make_shared<maddy::StrongParser>();
+
+  strongParser->Parse(text);
+
+  ASSERT_EQ(expected, text);
+}
+
+TEST(MADDY_STRONGPARSER, ItAllowsTrailingTripleUnderscores)
+{
+  std::string text = "some __text testing it___ out";
+  std::string expected = "some <strong>text testing it</strong>_ out";
+  auto strongParser = std::make_shared<maddy::StrongParser>();
+
+  strongParser->Parse(text);
+
+  ASSERT_EQ(expected, text);
+}
+
+TEST(MADDY_STRONGPARSER, ItAllowsManyLeadingLeftoverUnderscores)
+{
+  std::string text = "some ________text testing it__ out";
+  std::string expected = "some ______<strong>text testing it</strong> out";
+  auto strongParser = std::make_shared<maddy::StrongParser>();
+
+  strongParser->Parse(text);
+
+  ASSERT_EQ(expected, text);
+}
+
+TEST(MADDY_STRONGPARSER, ItAllowsManyTrailingLeftoverUnderscores)
+{
+  std::string text = "some __text testing it_______ out";
+  std::string expected = "some <strong>text testing it</strong>_____ out";
   auto strongParser = std::make_shared<maddy::StrongParser>();
 
   strongParser->Parse(text);
@@ -157,7 +188,7 @@ TEST(MADDY_STRONGPARSER, ItDoesntReplaceUnderscoresInsideCodeBlocks)
   ASSERT_EQ(expected, text);
 }
 
-TEST(DISABLED_MADDY_STRONGPARSER, ItDoesNotReplaceUnderscoresInURLs)
+TEST(MADDY_STRONGPARSER, ItDoesNotReplaceUnderscoresInURLs)
 {
   std::string text = "[Link Title](http://example.com/what__you__didn't__know)";
   std::string expected =
