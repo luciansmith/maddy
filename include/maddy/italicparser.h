@@ -42,9 +42,11 @@ public:
     static std::regex re(R"(\*([^\*]*)\*)");
     static std::string replacement = "<i>$1</i>";
 
-    ApplyOutsideProtectedSpans(line, [](std::string& segment) {
-      segment = std::regex_replace(segment, re, replacement);
-    });
+    ApplyOutsideProtectedSpans(
+      line,
+      [](std::string& segment)
+      { segment = std::regex_replace(segment, re, replacement); }
+    );
   }
 }; // class ItalicParser
 

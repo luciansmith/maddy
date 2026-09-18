@@ -59,17 +59,26 @@ inline std::vector<std::pair<std::size_t, std::size_t>> FindProtectedSpans(
     if (line[i] == '`')
     {
       std::size_t runStart = i;
-      while (i < line.size() && line[i] == '`') { ++i; }
+      while (i < line.size() && line[i] == '`')
+      {
+        ++i;
+      }
       std::size_t runLength = i - runStart;
 
       std::size_t searchPos = i;
       while (searchPos < line.size())
       {
         std::size_t closeStart = line.find('`', searchPos);
-        if (closeStart == std::string::npos) { break; }
+        if (closeStart == std::string::npos)
+        {
+          break;
+        }
 
         std::size_t closeEnd = closeStart;
-        while (closeEnd < line.size() && line[closeEnd] == '`') { ++closeEnd; }
+        while (closeEnd < line.size() && line[closeEnd] == '`')
+        {
+          ++closeEnd;
+        }
 
         if (closeEnd - closeStart == runLength)
         {
@@ -103,8 +112,7 @@ inline std::vector<std::pair<std::size_t, std::size_t>> FindProtectedSpans(
  * @return {void}
  */
 inline void ApplyOutsideProtectedSpans(
-  std::string& line,
-  const std::function<void(std::string&)>& transform
+  std::string& line, const std::function<void(std::string&)>& transform
 )
 {
   std::string result;

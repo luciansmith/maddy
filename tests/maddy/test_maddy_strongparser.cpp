@@ -99,7 +99,8 @@ TEST(MADDY_STRONGPARSER, ItMatchesBacktickRunsByEqualLength)
   // pair up into the code span. Bold text on either side of this is
   // still parsed normally.
   std::string text = "**pre** `foo``bar`` **post**";
-  std::string expected = "<strong>pre</strong> `foo``bar`` <strong>post</strong>";
+  std::string expected =
+    "<strong>pre</strong> `foo``bar`` <strong>post</strong>";
   auto strongParser = std::make_shared<maddy::StrongParser>();
 
   strongParser->Parse(text);

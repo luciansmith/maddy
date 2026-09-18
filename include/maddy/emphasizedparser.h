@@ -47,9 +47,11 @@ public:
     static std::regex re(R"(\b(_*)_(?![\s_])(.*?[^\s])_(_*)\b)");
     static std::string replacement = "$1<em>$2</em>$3";
 
-    ApplyOutsideProtectedSpans(line, [](std::string& segment) {
-      segment = std::regex_replace(segment, re, replacement);
-    });
+    ApplyOutsideProtectedSpans(
+      line,
+      [](std::string& segment)
+      { segment = std::regex_replace(segment, re, replacement); }
+    );
   }
 }; // class EmphasizedParser
 

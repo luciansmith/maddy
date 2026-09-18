@@ -55,7 +55,9 @@ TEST(MADDY_STRIKETHROUGHPARSER, ItMatchesBacktickRunsByEqualLength)
   ASSERT_EQ(expected, text);
 }
 
-TEST(MADDY_STRIKETHROUGHPARSER, ItLetsALongerBacktickFenceProtectAnInnerBacktick)
+TEST(
+  MADDY_STRIKETHROUGHPARSER, ItLetsALongerBacktickFenceProtectAnInnerBacktick
+)
 {
   // CommonMark spec example 329: "`` foo ` bar ``" -> "<code>foo ` bar</code>".
   // A double-backtick fence spans across a single backtick in its

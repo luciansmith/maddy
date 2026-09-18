@@ -51,10 +51,16 @@ public:
     // instead of being swallowed into its content.
     static std::regex reUnderscore{R"(\b(_*)__(?![\s_])(.*?[^\s])__(_*)\b)"};
 
-    ApplyOutsideProtectedSpans(line, [](std::string& segment) {
-      segment = std::regex_replace(segment, reAsterisk, "<strong>$1</strong>");
-      segment = std::regex_replace(segment, reUnderscore, "$1<strong>$2</strong>$3");
-    });
+    ApplyOutsideProtectedSpans(
+      line,
+      [](std::string& segment)
+      {
+        segment =
+          std::regex_replace(segment, reAsterisk, "<strong>$1</strong>");
+        segment =
+          std::regex_replace(segment, reUnderscore, "$1<strong>$2</strong>$3");
+      }
+    );
   }
 }; // class StrongParser
 

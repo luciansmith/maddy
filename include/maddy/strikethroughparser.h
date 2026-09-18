@@ -42,9 +42,11 @@ public:
     static std::regex re(R"(\~\~([^\~]*)\~\~)");
     static std::string replacement = "<s>$1</s>";
 
-    ApplyOutsideProtectedSpans(line, [](std::string& segment) {
-      segment = std::regex_replace(segment, re, replacement);
-    });
+    ApplyOutsideProtectedSpans(
+      line,
+      [](std::string& segment)
+      { segment = std::regex_replace(segment, re, replacement); }
+    );
   }
 }; // class StrikeThroughParser
 
