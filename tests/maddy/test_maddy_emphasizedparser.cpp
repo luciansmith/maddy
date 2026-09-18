@@ -177,3 +177,38 @@ TEST(MADDY_EMPHASIZEDPARSER, ItParsesOutsideTickBlocks)
 
   ASSERT_EQ(expected, text);
 }
+
+// The following cases are adapted from the CommonMark spec
+// (https://spec.commonmark.org/), which defines how a code span's
+// backtick delimiters are matched and how it interacts with surrounding
+// markup.
+
+TEST(MADDY_EMPHASIZEDPARSER, ItMatchesBacktickRunsByEqualLength)
+{
+  // CommonMark spec example 349: "`foo``bar``" -> "`foo<code>bar</code>".
+  // The lone opening backtick has no closing run of length 1 (the next
+  // runs are length 2), so it is ordinary text; the two length-2 runs
+  // pair up into the code span. Emphasized text on either side of this
+  // is still parsed normally.
+  std::string text = "_pre_ `foo``bar`` _post_";
+  std::string expected = "<em>pre</em> `foo``bar`` <em>post</em>";
+  auto emphasizedParser = std::make_shared<maddy::EmphasizedParser>();
+
+  emphasizedParser->Parse(text);
+
+  ASSERT_EQ(expected, text);
+}
+
+TEST(MADDY_EMPHASIZEDPARSER, ItLetsALongerBacktickFenceProtectAnInnerBacktick)
+{
+  // CommonMark spec example 329: "`` foo ` bar ``" -> "<code>foo ` bar</code>".
+  // A double-backtick fence spans across a single backtick in its
+  // content; text after the fence is still parsed normally.
+  std::string text = "`` foo ` bar `` and _emph_";
+  std::string expected = "`` foo ` bar `` and <em>emph</em>";
+  auto emphasizedParser = std::make_shared<maddy::EmphasizedParser>();
+
+  emphasizedParser->Parse(text);
+
+  ASSERT_EQ(expected, text);
+}
