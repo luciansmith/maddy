@@ -68,8 +68,10 @@ TEST(MADDY_STRONGPARSER, ItDoesNotParseInsideInlineCode)
 
   std::vector<testIt> tests{
     {
+      // Per CommonMark, a code span protects only its own extent: text
+      // before it (here, "**bla**") is still eligible for parsing.
       "some text **bla** `/**text**/` testing `**it**` out",
-      "some text **bla** `/**text**/` testing `**it**` out",
+      "some text <strong>bla</strong> `/**text**/` testing `**it**` out",
     },
     {"some text _bla_ text testing __it__ out",
      "some text _bla_ text testing <strong>it</strong> out"},
@@ -82,6 +84,42 @@ TEST(MADDY_STRONGPARSER, ItDoesNotParseInsideInlineCode)
     strongParser->Parse(test.text);
     ASSERT_EQ(test.expected, test.text);
   }
+}
+
+// The following cases are adapted from the CommonMark spec
+// (https://spec.commonmark.org/), which defines how a code span's
+// backtick delimiters are matched and how it interacts with surrounding
+// markup.
+
+TEST(MADDY_STRONGPARSER, ItMatchesBacktickRunsByEqualLength)
+{
+  // CommonMark spec example 349: "`foo``bar``" -> "`foo<code>bar</code>".
+  // The lone opening backtick has no closing run of length 1 (the next
+  // runs are length 2), so it is ordinary text; the two length-2 runs
+  // pair up into the code span. Bold text on either side of this is
+  // still parsed normally.
+  std::string text = "**pre** `foo``bar`` **post**";
+  std::string expected =
+    "<strong>pre</strong> `foo``bar`` <strong>post</strong>";
+  auto strongParser = std::make_shared<maddy::StrongParser>();
+
+  strongParser->Parse(text);
+
+  ASSERT_EQ(expected, text);
+}
+
+TEST(MADDY_STRONGPARSER, ItLetsALongerBacktickFenceProtectAnInnerBacktick)
+{
+  // CommonMark spec example 329: "`` foo ` bar ``" -> "<code>foo ` bar</code>".
+  // A double-backtick fence spans across a single backtick in its
+  // content; text after the fence is still parsed normally.
+  std::string text = "`` foo ` bar `` and **bold**";
+  std::string expected = "`` foo ` bar `` and <strong>bold</strong>";
+  auto strongParser = std::make_shared<maddy::StrongParser>();
+
+  strongParser->Parse(text);
+
+  ASSERT_EQ(expected, text);
 }
 
 TEST(MADDY_STRONGPARSER, ItReplacesUnderscoresAtStringEdges)
