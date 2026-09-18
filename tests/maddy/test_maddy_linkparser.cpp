@@ -86,6 +86,21 @@ TEST(
   ASSERT_EQ(expected, text);
 }
 
+TEST(MADDY_LINKPARSER, ItHandlesURLsWithCaretCharacters)
+{
+  // The URL-exclusion character class used to have redundant `^`
+  // characters (`[^)^ ^"]`) that inadvertently excluded literal `^`
+  // from URLs too; make sure carets in URLs are still matched.
+  std::string text = "See [caret link](http://example.com/foo^bar) here.";
+  std::string expected =
+    "See <a href=\"http://example.com/foo^bar\">caret link</a> here.";
+  auto linkParser = std::make_shared<maddy::LinkParser>();
+
+  linkParser->Parse(text);
+
+  ASSERT_EQ(expected, text);
+}
+
 TEST(MADDY_LINKPARSER, ItDoesntReplaceMarkdownWithSpaceInURL)
 {
   // Spaces are not allowed in URLs, so don't match them.
